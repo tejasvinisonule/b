@@ -1,24 +1,19 @@
 const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db");
-const User = require("./models/User"); // Import User model schema
+const mongoose = require("mongoose");
+const path = require("path");
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-// Connect DB
-connectDB();
+app.use(express.static(path.join(__dirname, "frontend")));
 
-// API
-app.post("/api/user", async (req, res) => {
-  try {
-    const newUser = new User(req.body);
-    await newUser.save();
-    res.json({ message: "User saved", data: newUser });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
-app.listen(5000, () => console.log("🚀 Server running on http://localhost:5500"));
+const PORT = process.env.PORT || 5500;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
